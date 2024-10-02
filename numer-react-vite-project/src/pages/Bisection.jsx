@@ -6,6 +6,7 @@ import Plot from "react-plotly.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
+
 const BisectionMethod = () => {
     const [equation, setEquation] = useState("(x^4)-13");
     const [xl, setXL] = useState(0);
