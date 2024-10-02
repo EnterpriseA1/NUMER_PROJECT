@@ -1,6 +1,6 @@
 import '../App.css'
 import React, { useState, useEffect } from "react";
-import { Button, Container, Form, Table, Row, Col } from "react-bootstrap";
+import { Button, Container, Form, Table, Row, Col } from "/react-bootstrap";
 import { evaluate } from "mathjs";
 import Plot from "react-plotly.js";
 import "bootstrap/dist/css/bootstrap.min.css";

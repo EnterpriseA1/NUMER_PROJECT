@@ -1,5 +1,5 @@
 import React, { useState } from "react"; // Importing useState
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button } from "/react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css"; // Bootstrap styles
 import NavbarComponent from "../component/Navbar"; // Import your NavbarComponent
 

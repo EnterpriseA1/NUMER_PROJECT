@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 //import App from './pages/Bisection.jsx'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from '/react-router-dom'
 import './index.css'
 import HomePage from './pages/HOME.jsx'
 import BisectionMethod from './pages/Bisection.jsx'
