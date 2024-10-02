@@ -12,7 +12,7 @@ const HomePage = () => {
     <>
       <NavbarComponent />
       {/* Add padding to the container to prevent overlap with the navbar */}
-      <div className=" flex justify-center items-center min-h-screen">
+      <div className=" flex justify-center items-center mt-20">
         <div className="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg text-center">
           <h1 className="text-3xl font-bold mb-6 text-gray-800">
             Welcome to My Website
