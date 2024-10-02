@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
-import { evaluate } from 'mathjs';
-const BisectionMethod = () => {
+import { evaluate } from "mathjs";
+
+const FalsePositionMethod = () => {
     const [equation, setEquation] = useState("(x^4)-13");
     const [xl, setXL] = useState(0);
     const [xr, setXR] = useState(0);
@@ -12,37 +13,38 @@ const BisectionMethod = () => {
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
-    const calculateBisection = (xl, xr) => {
-        let xm, fXm, fXr, ea;
+    const calculateFalsePosition = (xl, xr) => {
+        let xm, fXm, fXl, fXr, ea;
         let iter = 0;
         const tolerance = 0.00001;
         const newIterations = [];
 
         do {
-            xm = (xl + xr) / 2.0; // Calculate Xm
+            const scopeXl = { x: xl };
             const scopeXr = { x: xr };
-            const scopeXm = { x: xm };
+            fXl = evaluate(equation, scopeXl);
             fXr = evaluate(equation, scopeXr);
+
+            // Calculate Xm using the False Position formula
+            xm = xl - (fXl * (xr - xl)) / (fXr - fXl);
+            const scopeXm = { x: xm };
             fXm = evaluate(equation, scopeXm);
             iter++;
-            if (xm == 0) {
-                break;
-            }
-            if (fXm * fXr > 0) {
-                ea = error(xr, xm);
-                newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
+
+            newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
+
+            if (fXm * fXl < 0) {
                 xr = xm; // Update XR
             } else {
-                ea = error(xl, xm);
-                newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
                 xl = xm; // Update XL
             }
+
+            ea = Math.abs(fXm); // Update error based on function value
         } while (ea > tolerance);
 
         setRoot(xm);
         setIterations(newIterations);
     };
-
 
     return (
         <>
@@ -50,7 +52,7 @@ const BisectionMethod = () => {
             <div className="flex flex-col justify-center items-center border rounded p-4 mt-5 min-h-screen">
                 <div className="flex flex-col justify-center items-center border rounded p-4">
                     <div className="flex flex-col items-center">
-                        <h2 className="text-3xl font-bold mb-4">Bisection Method Calculator</h2>
+                        <h2 className="text-3xl font-bold mb-4">False Position Method Calculator</h2>
                     </div>
 
                     <form className="flex flex-col items-center space-y-4">
@@ -86,7 +88,7 @@ const BisectionMethod = () => {
                         </label>
                         <button
                             type="button"
-                            onClick={() => calculateBisection(xl, xr)}
+                            onClick={() => calculateFalsePosition(xl, xr)}
                             className="bg-gray-800 text-white px-4 py-2 rounded"
                         >
                             Calculate
@@ -130,9 +132,7 @@ const BisectionMethod = () => {
                                 },
                                 {
                                     x: iterations.map((iteration) => iteration.Xm),
-                                    y: iterations.map((iteration) =>
-                                        evaluate(equation, { x: iteration.Xm })
-                                    ),
+                                    y: iterations.map((iteration) => evaluate(equation, { x: iteration.Xm })),
                                     type: "scatter",
                                     mode: "lines+markers",
                                     marker: { color: "red" },
@@ -140,9 +140,7 @@ const BisectionMethod = () => {
                                 },
                                 {
                                     x: iterations.map((iteration) => iteration.Xl),
-                                    y: iterations.map((iteration) =>
-                                        evaluate(equation, { x: iteration.Xl })
-                                    ),
+                                    y: iterations.map((iteration) => evaluate(equation, { x: iteration.Xl })),
                                     type: "scatter",
                                     mode: "lines+markers",
                                     marker: { color: "green" },
@@ -150,9 +148,7 @@ const BisectionMethod = () => {
                                 },
                                 {
                                     x: iterations.map((iteration) => iteration.Xr),
-                                    y: iterations.map((iteration) =>
-                                        evaluate(equation, { x: iteration.Xr })
-                                    ),
+                                    y: iterations.map((iteration) => evaluate(equation, { x: iteration.Xr })),
                                     type: "scatter",
                                     mode: "lines+markers",
                                     marker: { color: "cyan" },
@@ -161,16 +157,14 @@ const BisectionMethod = () => {
                             ]}
                             layout={{
                                 title: "Function Plot",
-                                xaxis: { title: "Iteration" },
+                                xaxis: { title: "X Values" },
                                 yaxis: { title: "f(x)" },
-                                autosize: true, // Ensures the graph resizes with the window
-                                width: window.innerWidth < 768 ? window.innerWidth - 40 : undefined, // Adjust width for mobile
+                                autosize: true,
+                                width: window.innerWidth < 768 ? window.innerWidth - 40 : undefined,
                             }}
                         />
                     </div>
                 </div>
-
-
 
                 <div className="flex flex-col justify-center items-center mt-4 w-full overflow-x-auto">
                     <table className="min-w-full table-auto text-center border-collapse border border-gray-800">
@@ -199,4 +193,4 @@ const BisectionMethod = () => {
     );
 };
 
-export default BisectionMethod;
+export default FalsePositionMethod;
