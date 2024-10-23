@@ -13,6 +13,7 @@
     "better-react-mathjax": "^2.0.3",
     "bootstrap": "^5.3.3",
     "localforage": "^1.10.0",
+    "lucide-react": "^0.453.0",
     "match-sorter": "^6.3.4",
     "mathjax": "^3.2.2",
     "mathjs": "^13.1.1",
