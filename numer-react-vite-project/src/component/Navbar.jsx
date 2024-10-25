@@ -80,6 +80,12 @@ const NavbarComponent = () => {
                       False Position Method
                     </a>
                     <a
+                      href="/onepoint"
+                      className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Onepoint Iteration Method
+                    </a>
+                    <a
                       href="/Newton"
                       className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
                     >
@@ -161,6 +167,12 @@ const NavbarComponent = () => {
                       className="block px-3 py-2 text-gray-300 hover:text-white"
                     >
                       False Position Method
+                    </a>
+                    <a
+                      href="/onepoint"
+                      className="block px-3 py-2 text-gray-300 hover:text-white"
+                    >
+                      Onepoint Iteration Method
                     </a>
                     <a
                       href="/Newton"

@@ -8,7 +8,7 @@ import BisectionMethod from './pages/Bisection.jsx'
 import GraphicalMethod from './pages/Graphical.jsx'
 import FalsePositionMethod from './pages/False-position.jsx'
 import NewtonRaphsonMethod from './pages/Newton.jsx'
-
+import OnePointIterationMethod from './pages/onepoint.jsx'
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
@@ -17,6 +17,7 @@ createRoot(document.getElementById('root')).render(
     <Route path="/Graphical" element={<GraphicalMethod />}></Route>
     <Route path="/False-Position" element={<FalsePositionMethod />}></Route>
     <Route path="/Newton" element={<NewtonRaphsonMethod />}></Route>
+    <Route path="/onepoint" element={<OnePointIterationMethod />}></Route>
     </Routes>
   </BrowserRouter>,
 )
