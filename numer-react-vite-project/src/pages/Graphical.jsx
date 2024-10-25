@@ -1,151 +1,234 @@
-import '../App.css';
-import React, { useState } from 'react';
-import { evaluate } from 'mathjs';
-import Plot from 'react-plotly.js';
-import MathEquation from '../component/MathEquation';
-import NavbarComponent from '../component/Navbar';
+import React, { useState } from "react";
+import Plot from "react-plotly.js";
+import MathEquation from "../component/MathEquation";
+import NavbarComponent from "../component/Navbar";
+import { evaluate, log, pow, floor, abs } from 'mathjs';
 
 const GraphicalMethod = () => {
     const [equation, setEquation] = useState("(x^4)-13");
-    const [xs, setXs] = useState(0);
-    const [xe, setXe] = useState(0);
-    const [root, setRoot] = useState(null);
-    const [iterations, setIterations] = useState([]);
+    const [xl, setXL] = useState(0);
+    const [xr, setXR] = useState(0);
+    const [hasCalculated, setHasCalculated] = useState(false);
+    const [result, setResult] = useState({
+        result: 0,
+        iter: 0,
+        iterations: []
+    });
 
-    const calculateGraphical = (xs, xe) => {
-        let xStart = parseFloat(xs);
-        let xEnd = parseFloat(xe);
-        let fxnum = evaluate(equation, { x: xStart });
-        let newData = [];
+    const calculateGraphical = (xl, xr) => {
+        // Calculate step size using logarithm
+        const calculateStep = (xStart, xEnd) => {
+            const step = log(xEnd - xStart, 10);
+            if (step % 1 === 0) return Number(pow(10, step - 1));
+            return Number(pow(10, floor(step)));
+        };
 
-        while (xStart < xEnd && fxnum <= 0) {
-            xStart++;
-            fxnum = evaluate(equation, { x: xStart });
+        const result = {
+            result: 0,
+            iter: 0,
+            iterations: [],
+            error: null
+        };
+
+        // Validation
+        if (!equation || equation.trim().length === 0) {
+            alert('Invalid function');
+            return;
         }
 
-        if (fxnum > 0) {
-            let tole = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7];
-            let count = 0;
-            let ztemp = xStart;
-            let iter = 0;
+        if (xl >= xr) {
+            alert('X Start must be less than X End');
+            return;
+        }
 
-            while (count < tole.length && ztemp < xEnd) {
-                let fxCurrent = evaluate(equation, { x: ztemp });
+        let step = calculateStep(xl, xr);
+        const MAX_ITER = 1000;
+        let iter = 0;
+        let x = xl;
+        let temp;
 
-                if (fxCurrent > 0) {
-                    ztemp -= tole[count];
-                    count++;
-                } else {
-                    newData.push({ iteration: iter, xValue: ztemp, fX: fxCurrent });
-                    iter++;
-                    ztemp += tole[count];
-                }
+        try {
+            temp = evaluate(equation, { x: xl });
+        } catch (error) {
+            alert('Invalid function');
+            return;
+        }
+
+        const iterations = [];
+        let newTemp;
+
+        // Generate plot points for smooth curve
+        const plotPoints = [];
+        const plotStep = (xr - xl) / 200;
+        for (let plotX = xl; plotX <= xr; plotX += plotStep) {
+            try {
+                const plotY = evaluate(equation, { x: plotX });
+                plotPoints.push({ x: plotX, y: plotY });
+            } catch (error) {
+                continue;
+            }
+        }
+
+        // Main iteration
+        while (iter < MAX_ITER) {
+            iter += 1;
+            if (iter === MAX_ITER) {
+                alert('Max iteration reached');
+                break;
             }
 
-            setIterations(newData);
-            setRoot(ztemp);
-        } else {
-            alert('No valid roots found in the given range.');
+            newTemp = evaluate(equation, { x });
+            iterations.push({ x: Number(x), y: newTemp });
+
+            if (abs(newTemp) < 0.0001) {
+                break;
+            }
+
+            if (temp * newTemp < 0) {
+                x -= step;
+                step /= 10;
+                newTemp = evaluate(equation, { x });
+            }
+
+            if (x === xr) break;
+            x += step;
+            if (x > xr) {
+                x = xr;
+            }
+            temp = newTemp;
         }
+
+        setResult({
+            result: x,
+            iter: iter,
+            iterations: [...plotPoints, ...iterations]
+        });
+        setHasCalculated(true);
     };
 
     return (
         <>
             <NavbarComponent />
-            <div className="flex flex-col items-center p-8 mt-5 min-h-screen bg-gray-100">
-                <div className="flex flex-col items-center p-6 bg-white rounded-lg shadow-lg w-full max-w-3xl">
-                    <h2 className="text-3xl font-bold mb-4">Graphical Method Root Finder</h2>
-
-                    <div className="w-full">
-                        <label className="block mb-2 text-lg font-medium">Input f(x)</label>
-                        <input
-                            type="text"
-                            id="equation"
-                            value={equation}
-                            onChange={(e) => setEquation(e.target.value)}
-                            className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="block mb-2 text-lg font-medium">Input X-Start</label>
-                        <input
-                            type="number"
-                            id="X-Start"
-                            value={xs}
-                            onChange={(e) => setXs(parseFloat(e.target.value))}
-                            className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <label className="block mb-2 text-lg font-medium">Input X-End</label>
-                        <input
-                            type="number"
-                            id="X-End"
-                            value={xe}
-                            onChange={(e) => setXe(parseFloat(e.target.value))}
-                            className="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <button
-                        onClick={() => calculateGraphical(xs, xe)}
-                        className="px-6 py-2 bg-gray-800 text-white rounded hover:bg-gray-900 transition-colors"
-                    >
-                        Calculate
-                    </button>
-                </div>
-
-                <div className="mt-8 text-center">
-                    <div className="mb-4 text-2xl font-bold">
-                        Equation: <MathEquation equation={`$${"f(x)"}=$ $${equation}$`} />
+            <div className="flex flex-col justify-center items-center border rounded p-4 mt-5 min-h-screen">
+                <div className="flex flex-col justify-center items-center border rounded p-4">
+                    <div className="flex flex-col items-center">
+                        <h2 className="text-3xl font-bold mb-4">Graphical Method</h2>
                     </div>
 
-                    <h5 className="text-xl font-bold">
-                        Answer = {root !== null ? Math.abs(root.toPrecision(7)) : 'Not found'}
-                    </h5>
+                    <form className="flex flex-col items-center space-y-4">
+                        <label className="block">
+                            <span className="text-lg">Input f(x)</span>
+                            <input
+                                type="text"
+                                value={equation}
+                                onChange={(e) => setEquation(e.target.value)}
+                                className="form-input mt-1 block w-full border rounded p-2"
+                            />
+                        </label>
+                        <label className="block">
+                            <span className="text-lg">Input X Start</span>
+                            <input
+                                type="number"
+                                value={xl}
+                                onChange={(e) => setXL(parseFloat(e.target.value))}
+                                className="form-input mt-1 block w-full border rounded p-2"
+                            />
+                        </label>
+                        <label className="block">
+                            <span className="text-lg">Input X End</span>
+                            <input
+                                type="number"
+                                value={xr}
+                                onChange={(e) => setXR(parseFloat(e.target.value))}
+                                className="form-input mt-1 block w-full border rounded p-2"
+                            />
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => calculateGraphical(xl, xr)}
+                            className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+                        >
+                            Calculate
+                        </button>
+                    </form>
+                    <br />
+                    <div className="mb-2 font-bold text-2xl">
+                        Equation:{" "}
+                        {<MathEquation equation={`$${"f(x)"}=$ $${equation}$`} />}
+                    </div>
+
+                    {hasCalculated && (
+                        <div>
+                            <h5 className="font-bold text-xl">Answer = {result.result.toPrecision(7)}</h5>
+                        </div>
+                    )}
                 </div>
 
-                <div className="mt-8 w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-3xl font-bold mb-4 text-center">Graph</h3>
-                    <Plot
-                        data={[
-                            {
-                                x: iterations.map((iteration) => iteration.xValue),
-                                y: iterations.map((iteration) => iteration.fX),
-                                type: "scatter",
-                                mode: "lines",
-                                marker: { color: "blue" },
-                                name: "f(x)"
-                            },
-                            {
-                                x: root !== null ? [root] : [],
-                                y: root !== null ? [evaluate(equation, { x: root })] : [],
-                                type: "scatter",
-                                mode: "markers",
-                                marker: { color: "red", size: 10 },
-                                name: "Root"
-                            }
-                        ]}
-                        layout={{
-                            title: "Function Plot",
-                            xaxis: { title: "X" },
-                            yaxis: { title: "f(x)" }
-                        }}
-                    />
+                <div className="flex flex-col justify-center items-center mt-4 w-full">
+                    <h3 className="text-3xl font-bold mb-4">Graph</h3>
+                    <div className="w-full flex justify-center overflow-hidden overflow-x-auto">
+                        <Plot
+                            data={hasCalculated ? [
+                                {
+                                    x: result.iterations.slice(0, 200).map(point => point.x),
+                                    y: result.iterations.slice(0, 200).map(point => point.y),
+                                    type: "scatter",
+                                    mode: "lines",
+                                    line: { color: "blue", width: 2 },
+                                    name: "f(x)"
+                                },
+                                {
+                                    x: result.iterations.slice(200).map(point => point.x),
+                                    y: result.iterations.slice(200).map(point => point.y),
+                                    type: "scatter",
+                                    mode: "markers",
+                                    marker: { color: "red", size: 8 },
+                                    name: "Search Points"
+                                },
+                                {
+                                    x: [result.result],
+                                    y: [evaluate(equation, { x: result.result })],
+                                    type: "scatter",
+                                    mode: "markers",
+                                    marker: { color: "green", size: 12, symbol: "star" },
+                                    name: "Root"
+                                }
+                            ] : []}
+                            layout={{
+                                title: "Function Plot",
+                                xaxis: { title: "x" },
+                                yaxis: { title: "f(x)" },
+                                autosize: true,
+                                width: window.innerWidth < 768 ? window.innerWidth - 40 : undefined,
+                                showlegend: true
+                            }}
+                        />
+                    </div>
                 </div>
 
-                <div className="mt-8 w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
-                    <table className="table-auto w-full text-center border border-gray-300">
+                <div className="flex flex-col justify-center items-center mt-4 w-full overflow-x-auto">
+                    <table className="min-w-full table-auto text-center border-collapse border border-gray-800">
                         <thead>
-                            <tr>
-                                <th className="px-4 py-2 border border-gray-300">Iteration</th>
-                                <th className="px-4 py-2 border border-gray-300">X</th>
-                                <th className="px-4 py-2 border border-gray-300">f(X)</th>
+                            <tr className="bg-gray-800 text-white">
+                                <th className="px-4 py-2 border border-gray-700">Iteration</th>
+                                <th className="px-4 py-2 border border-gray-700">X</th>
+                                <th className="px-4 py-2 border border-gray-700">f(x)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {iterations.map((element, index) => (
-                                <tr key={index}>
-                                    <td className="px-4 py-2 border border-gray-300">{element.iteration}</td>
-                                    <td className="px-4 py-2 border border-gray-300">{element.xValue.toFixed(4)}</td>
-                                    <td className="px-4 py-2 border border-gray-300">{element.fX.toFixed(4)}</td>
+                            {hasCalculated ? result.iterations.slice(200).map((point, index) => (
+                                <tr key={index} className={`bg-gray-100 hover:bg-gray-200 ${index % 2 === 0 ? "bg-gray-50" : ""}`}>
+                                    <td className="border px-4 py-2">{index + 1}</td>
+                                    <td className="border px-4 py-2">{point.x.toPrecision(7)}</td>
+                                    <td className="border px-4 py-2">{point.y.toPrecision(7)}</td>
                                 </tr>
-                            ))}
+                            )) : (
+                                <tr>
+                                    <td className="border px-4 py-2">-</td>
+                                    <td className="border px-4 py-2">-</td>
+                                    <td className="border px-4 py-2">-</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
