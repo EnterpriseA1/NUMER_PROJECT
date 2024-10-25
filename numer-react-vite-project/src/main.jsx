@@ -9,6 +9,8 @@ import GraphicalMethod from './pages/Graphical.jsx'
 import FalsePositionMethod from './pages/False-position.jsx'
 import NewtonRaphsonMethod from './pages/Newton.jsx'
 import OnePointIterationMethod from './pages/onepoint.jsx'
+import SecantMethod from './pages/secant.jsx'
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
@@ -18,6 +20,7 @@ createRoot(document.getElementById('root')).render(
     <Route path="/False-Position" element={<FalsePositionMethod />}></Route>
     <Route path="/Newton" element={<NewtonRaphsonMethod />}></Route>
     <Route path="/onepoint" element={<OnePointIterationMethod />}></Route>
+    <Route path="/secant" element={<SecantMethod />}></Route>
     </Routes>
   </BrowserRouter>,
 )
