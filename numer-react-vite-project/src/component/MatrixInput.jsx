@@ -1,15 +1,53 @@
 import React from "react";
 
-// Size Input Component
-export const SizeInput = ({ sizeInput, onSizeChange, size }) => {
+// Matrix Input Component
+export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstantChange }) => {
     return (
         <div className="flex flex-col items-center mb-6">
-            <label className="text-lg mb-2">Matrix Size (n x n):</label>
+            <div className="flex items-center gap-2 mb-4">
+                <div className="text-xl font-serif">[A]</div>
+                <div className="text-xl ml-24">x</div>
+                <div className="text-xl ml-24">B</div>
+            </div>
+            <div className="overflow-x-auto max-w-full" style={{ maxHeight: '60vh' }}>
+                <div className="grid gap-4" style={{ minWidth: 'fit-content' }}>
+                    {matrix.map((row, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                            {row.map((col, j) => (
+                                <input
+                                    key={j}
+                                    type="number"
+                                    value={col || ""}
+                                    onChange={(e) => onMatrixChange(i, j, e.target.value)}
+                                    className="w-16 h-16 border rounded p-1 text-center text-lg"
+                                />
+                            ))}
+                            <div className="text-gray-400 mx-2">x{i + 1}</div>
+                            <div className="mx-2">=</div>
+                            <input
+                                type="number"
+                                value={constants[i] || ""}
+                                onChange={(e) => onConstantChange(i, e.target.value)}
+                                className="w-16 h-16 border rounded p-1 text-center text-lg"
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Size Input Component ที่มีการปรับปรุงสไตล์
+export const SizeInput = ({ sizeInput, onSizeChange, size }) => {
+    return (
+        <div className="flex flex-col items-center mb-8">
+            <label className="text-xl mb-3">Enter Matrix's Dimension (n × n):</label>
             <input 
                 type="text"
                 value={sizeInput}
                 onChange={onSizeChange}
-                className="form-input border rounded p-2 w-24 text-center"
+                className="form-input border rounded p-3 w-64 text-center text-xl"
                 placeholder="Enter size"
             />
             {parseInt(sizeInput) <= 0 && sizeInput !== "" && 
@@ -22,40 +60,7 @@ export const SizeInput = ({ sizeInput, onSizeChange, size }) => {
     );
 };
 
-// Matrix Input Component
-export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstantChange }) => {
-    return (
-        <div className="flex flex-col items-center mb-6">
-            <div className="text-lg font-bold mb-4">Coefficient Matrix:</div>
-            <div className="overflow-x-auto max-w-full" style={{ maxHeight: '60vh' }}>
-                <div className="grid gap-2" style={{ minWidth: 'fit-content' }}>
-                    {matrix.map((row, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                            {row.map((col, j) => (
-                                <input
-                                    key={j}
-                                    type="number"
-                                    value={col || ""}
-                                    onChange={(e) => onMatrixChange(i, j, e.target.value)}
-                                    className="w-14 h-14 border rounded p-1 text-center text-sm"
-                                />
-                            ))}
-                            <span className="mx-2 font-bold">=</span>
-                            <input
-                                type="number"
-                                value={constants[i] || ""}
-                                onChange={(e) => onConstantChange(i, e.target.value)}
-                                className="w-14 h-14 border rounded p-1 text-center text-sm"
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// Results Table Component
+// Results Table Component คงเดิม
 export const ResultsTable = ({ results }) => {
     return (
         <div className="overflow-x-auto">

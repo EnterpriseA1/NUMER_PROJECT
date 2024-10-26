@@ -10,54 +10,34 @@ const CramerCalculator = () => {
     const [results, setResults] = useState([]);
     const [mainDet, setMainDet] = useState(null);
 
-    // Calculate determinant for 2x2 matrix
-    const det2x2 = (matrix) => {
-        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-    };
+    const getSubMatrix = (matrix, excludeRow, excludeCol) => {
+        const n = matrix.length;
+        let subMatrix = [];
 
-    // Get cofactor of matrix
-    const getCofactor = (matrix, temp, p, q, n) => {
-        let i = 0, j = 0;
-        
-        for (let row = 0; row < n; row++) {
-            for (let col = 0; col < n; col++) {
-                if (row !== p && col !== q) {
-                    temp[i][j++] = matrix[row][col];
-                    if (j === n - 1) {
-                        j = 0;
-                        i++;
-                    }
-                }
+        for (let i = 0; i < n; i++) {
+            if (i === excludeRow) continue;
+
+            let row = [];
+            for (let j = 0; j < n; j++) {
+                if (j === excludeCol) continue;
+                row.push(matrix[i][j]);
             }
+            subMatrix.push(row);
         }
+        return subMatrix;
     };
 
-    // Calculate determinant for any size matrix
     const calculateDeterminant = (matrix) => {
         const n = matrix.length;
-        
-        // Base case for 1x1 matrix
-        if (n === 1) {
-            return matrix[0][0];
+
+        if (n === 1) return matrix[0][0];
+        if (n === 2) return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+        let det = 0;
+        for (let j = 0; j < n; j++) {
+            det += Math.pow(-1, j) * matrix[0][j] * calculateDeterminant(getSubMatrix(matrix, 0, j));
         }
-        
-        // Base case for 2x2 matrix
-        if (n === 2) {
-            return det2x2(matrix);
-        }
-        
-        let D = 0;
-        let sign = 1;
-        let temp = Array(n-1).fill().map(() => Array(n-1).fill(0));
-        
-        // Expand along first row
-        for (let f = 0; f < n; f++) {
-            getCofactor(matrix, temp, 0, f, n);
-            D += sign * matrix[0][f] * calculateDeterminant(temp);
-            sign = -sign;
-        }
-        
-        return D;
+        return det;
     };
 
     const handleMatrixChange = (row, col, value) => {
@@ -89,39 +69,40 @@ const CramerCalculator = () => {
 
     const calculateCramer = () => {
         try {
-            // Calculate main determinant
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    if (isNaN(matrix[i][j])) throw new Error("Matrix contains invalid values");
+                }
+                if (isNaN(constants[i])) throw new Error("Constants vector contains invalid values");
+            }
+
             const detA = calculateDeterminant(matrix);
             setMainDet(detA);
 
             if (Math.abs(detA) < 1e-10) {
-                alert("The system has no unique solution (determinant is too close to 0)");
-                return;
+                throw new Error("The system has no unique solution (determinant is too close to 0)");
             }
 
             const solutions = [];
-            // Calculate solution for each variable
             for (let i = 0; i < size; i++) {
-                // Create matrix for current variable
                 const modifiedMatrix = matrix.map((row, rowIndex) =>
-                    row.map((col, colIndex) => 
-                        colIndex === i ? constants[rowIndex] : col
-                    )
+                    row.map((col, colIndex) => (colIndex === i ? constants[rowIndex] : col))
                 );
-                
-                // Calculate determinant and solution
+
                 const detModified = calculateDeterminant(modifiedMatrix);
                 const solution = detModified / detA;
-                
+
                 solutions.push({
                     variable: `x${i + 1}`,
                     value: solution,
                     determinant: detModified
                 });
             }
-            
+
             setResults(solutions);
         } catch (error) {
-            alert("Error in calculation. Please check your input values.");
+            alert(error.message || "Error in calculation. Please check your input values.");
+            console.error("Calculation error:", error);
         }
     };
 
