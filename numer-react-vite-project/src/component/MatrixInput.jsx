@@ -4,11 +4,6 @@ import React from "react";
 export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstantChange }) => {
     return (
         <div className="flex flex-col items-center mb-6">
-            <div className="flex items-center gap-2 mb-4">
-                <div className="text-xl font-serif">[A]</div>
-                <div className="text-xl ml-24">x</div>
-                <div className="text-xl ml-24">B</div>
-            </div>
             <div className="overflow-x-auto max-w-full" style={{ maxHeight: '60vh' }}>
                 <div className="grid gap-4" style={{ minWidth: 'fit-content' }}>
                     {matrix.map((row, i) => (
