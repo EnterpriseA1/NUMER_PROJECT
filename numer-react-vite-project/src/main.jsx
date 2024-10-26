@@ -10,6 +10,7 @@ import FalsePositionMethod from './pages/False-position.jsx'
 import NewtonRaphsonMethod from './pages/Newton.jsx'
 import OnePointIterationMethod from './pages/onepoint.jsx'
 import SecantMethod from './pages/secant.jsx'
+import CramerCalculator from './pages/cramer.jsx'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')).render(
     <Route path="/Newton" element={<NewtonRaphsonMethod />}></Route>
     <Route path="/onepoint" element={<OnePointIterationMethod />}></Route>
     <Route path="/secant" element={<SecantMethod />}></Route>
+    <Route path="/cramer" element={<CramerCalculator />}></Route>
     </Routes>
   </BrowserRouter>,
 )

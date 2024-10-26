@@ -31,7 +31,7 @@ const FalsePositionMethod = () => {
             fXm = evaluate(equation, scopeXm);
             iter++;
 
-            newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
+            newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr, Error: error(xl, xm) });
 
             if (fXm * fXl < 0) {
                 xr = xm; // Update XR
@@ -174,6 +174,7 @@ const FalsePositionMethod = () => {
                                 <th className="px-4 py-2 border border-gray-700">XL</th>
                                 <th className="px-4 py-2 border border-gray-700">XM</th>
                                 <th className="px-4 py-2 border border-gray-700">XR</th>
+                                <th className="px-4 py-2 border border-gray-700">Error</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -183,6 +184,7 @@ const FalsePositionMethod = () => {
                                     <td className="border px-4 py-2">{element.Xl.toPrecision(7)}</td>
                                     <td className="border px-4 py-2">{element.Xm.toPrecision(7)}</td>
                                     <td className="border px-4 py-2">{element.Xr.toPrecision(7)}</td>
+                                    <td className="border px-4 py-2">{element.Error.toPrecision(7)}%</td>
                                 </tr>
                             ))}
                         </tbody>

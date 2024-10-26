@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
 import { evaluate } from 'mathjs';
+
 const BisectionMethod = () => {
     const [equation, setEquation] = useState("(x^4)-13");
     const [xl, setXL] = useState(0);
@@ -12,37 +13,47 @@ const BisectionMethod = () => {
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
+    // เคลียร์ค่าเมื่อมีการเปลี่ยนแปลง equation
+    useEffect(() => {
+        setRoot(0);
+        setIterations([]);
+    }, [equation]);
+
     const calculateBisection = (xl, xr) => {
-        let xm, fXm, fXr, ea;
-        let iter = 0;
-        const tolerance = 0.00001;
-        const newIterations = [];
+        try {
+            let xm, fXm, fXr, ea;
+            let iter = 0;
+            const tolerance = 0.00001;
+            const newIterations = [];
 
-        do {
-            xm = (xl + xr) / 2.0; // Calculate Xm
-            const scopeXr = { x: xr };
-            const scopeXm = { x: xm };
-            fXr = evaluate(equation, scopeXr);
-            fXm = evaluate(equation, scopeXm);
-            iter++;
-            if (xm == 0) {
-                break;
-            }
-            if (fXm * fXr > 0) {
-                ea = error(xr, xm);
-                newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
-                xr = xm; // Update XR
-            } else {
-                ea = error(xl, xm);
-                newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr });
-                xl = xm; // Update XL
-            }
-        } while (ea > tolerance);
+            do {
+                xm = (xl + xr) / 2.0; // Calculate Xm
+                const scopeXr = { x: xr };
+                const scopeXm = { x: xm };
+                fXr = evaluate(equation, scopeXr);
+                fXm = evaluate(equation, scopeXm);
+                iter++;
+                if (xm == 0) {
+                    break;
+                }
+                if (fXm * fXr > 0) {
+                    ea = error(xr, xm);
+                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr,Error: ea });
+                    xr = xm; // Update XR
+                } else {
+                    ea = error(xl, xm);
+                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr ,Error: ea});
+                    xl = xm; // Update XL
+                }
+            } while (ea > tolerance);
 
-        setRoot(xm);
-        setIterations(newIterations);
+            setRoot(xm);
+            setIterations(newIterations);
+        } catch (err) {
+            setRoot(0);
+            setIterations([]);
+        }
     };
-
 
     return (
         <>
@@ -163,14 +174,12 @@ const BisectionMethod = () => {
                                 title: "Function Plot",
                                 xaxis: { title: "Iteration" },
                                 yaxis: { title: "f(x)" },
-                                autosize: true, // Ensures the graph resizes with the window
-                                width: window.innerWidth < 768 ? window.innerWidth - 40 : undefined, // Adjust width for mobile
+                                autosize: true,
+                                width: window.innerWidth < 768 ? window.innerWidth - 40 : undefined,
                             }}
                         />
                     </div>
                 </div>
-
-
 
                 <div className="flex flex-col justify-center items-center mt-4 w-full overflow-x-auto">
                     <table className="min-w-full table-auto text-center border-collapse border border-gray-800">
@@ -180,6 +189,7 @@ const BisectionMethod = () => {
                                 <th className="px-4 py-2 border border-gray-700">XL</th>
                                 <th className="px-4 py-2 border border-gray-700">XM</th>
                                 <th className="px-4 py-2 border border-gray-700">XR</th>
+                                <th className="px-4 py-2 border border-gray-700">Error</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -189,6 +199,7 @@ const BisectionMethod = () => {
                                     <td className="border px-4 py-2">{element.Xl.toPrecision(7)}</td>
                                     <td className="border px-4 py-2">{element.Xm.toPrecision(7)}</td>
                                     <td className="border px-4 py-2">{element.Xr.toPrecision(7)}</td>
+                                    <td className="border px-4 py-2">{element.Error.toFixed(6)}%</td>
                                 </tr>
                             ))}
                         </tbody>
