@@ -5,7 +5,7 @@ import NavbarComponent from "../component/Navbar";
 import { evaluate, derivative } from "mathjs";
 
 const NewtonRaphsonMethod = () => {
-    const [equation, setEquation] = useState("(x^4)-13");
+    const [equation, setEquation] = useState("x^4-13");
     const [initialX, setInitialX] = useState(2);
     const [root, setRoot] = useState(0);
     const [iterations, setIterations] = useState([]);

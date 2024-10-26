@@ -5,7 +5,7 @@ import NavbarComponent from "../component/Navbar";
 import { evaluate } from 'mathjs';
 
 const BisectionMethod = () => {
-    const [equation, setEquation] = useState("(x^4)-13");
+    const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);
     const [xr, setXR] = useState(0);
     const [root, setRoot] = useState(0);

@@ -5,7 +5,7 @@ import NavbarComponent from "../component/Navbar";
 import { evaluate, log, pow, floor, abs } from 'mathjs';
 
 const GraphicalMethod = () => {
-    const [equation, setEquation] = useState("(x^4)-13");
+    const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);
     const [xr, setXR] = useState(0);
     const [hasCalculated, setHasCalculated] = useState(false);
