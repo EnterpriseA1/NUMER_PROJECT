@@ -12,8 +12,8 @@ export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstan
                                 <input
                                     key={j}
                                     type="number"
-                                    value={col || ""}
-                                    onChange={(e) => onMatrixChange(i, j, e.target.value)}
+                                    value={col === 0 ? "0" : col || ""}
+                                    onChange={(e) => onMatrixChange(i, j, e.target.value === "" ? 0 : e.target.value)}
                                     className="w-16 h-16 border rounded p-1 text-center text-lg"
                                 />
                             ))}
@@ -21,8 +21,8 @@ export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstan
                             <div className="mx-2">=</div>
                             <input
                                 type="number"
-                                value={constants[i] || ""}
-                                onChange={(e) => onConstantChange(i, e.target.value)}
+                                value={constants[i] === 0 ? "0" : constants[i] || ""}
+                                onChange={(e) => onConstantChange(i, e.target.value === "" ? 0 : e.target.value)}
                                 className="w-16 h-16 border rounded p-1 text-center text-lg"
                             />
                         </div>
@@ -33,7 +33,7 @@ export const MatrixInput = ({ size, matrix, constants, onMatrixChange, onConstan
     );
 };
 
-// Size Input Component ที่มีการปรับปรุงสไตล์
+// Size Input Component
 export const SizeInput = ({ sizeInput, onSizeChange, size }) => {
     return (
         <div className="flex flex-col items-center mb-8">
@@ -55,7 +55,7 @@ export const SizeInput = ({ sizeInput, onSizeChange, size }) => {
     );
 };
 
-// Results Table Component คงเดิม
+// Results Table Component
 export const ResultsTable = ({ results }) => {
     return (
         <div className="overflow-x-auto">
