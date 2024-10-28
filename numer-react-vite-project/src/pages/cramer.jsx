@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import NavbarComponent from "../component/Navbar";
 import { MatrixInput, SizeInput, ResultsTable } from "../component/MatrixInput";
+import { det } from "mathjs";
 
 const CramerCalculator = () => {
     const [sizeInput, setSizeInput] = useState("3");
@@ -9,36 +10,6 @@ const CramerCalculator = () => {
     const [constants, setConstants] = useState(Array(3).fill(0));
     const [results, setResults] = useState([]);
     const [mainDet, setMainDet] = useState(null);
-
-    const getSubMatrix = (matrix, excludeRow, excludeCol) => {
-        const n = matrix.length;
-        let subMatrix = [];
-
-        for (let i = 0; i < n; i++) {
-            if (i === excludeRow) continue;
-
-            let row = [];
-            for (let j = 0; j < n; j++) {
-                if (j === excludeCol) continue;
-                row.push(matrix[i][j]);
-            }
-            subMatrix.push(row);
-        }
-        return subMatrix;
-    };
-
-    const calculateDeterminant = (matrix) => {
-        const n = matrix.length;
-
-        if (n === 1) return matrix[0][0];
-        if (n === 2) return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-
-        let det = 0;
-        for (let j = 0; j < n; j++) {
-            det += Math.pow(-1, j) * matrix[0][j] * calculateDeterminant(getSubMatrix(matrix, 0, j));
-        }
-        return det;
-    };
 
     const handleMatrixChange = (row, col, value) => {
         const newMatrix = matrix.map((r, rIndex) =>
@@ -69,14 +40,20 @@ const CramerCalculator = () => {
 
     const calculateCramer = () => {
         try {
-            for (let i = 0; i < size; i++) {
-                for (let j = 0; j < size; j++) {
-                    if (isNaN(matrix[i][j])) throw new Error("Matrix contains invalid values");
+            // Validate input values
+            for(let i = 0; i < size; i++) {
+                for(let j = 0; j < size; j++) {
+                    if(isNaN(matrix[i][j])) {
+                        throw new Error("Matrix contains invalid values");
+                    }
                 }
-                if (isNaN(constants[i])) throw new Error("Constants vector contains invalid values");
+                if(isNaN(constants[i])) {
+                    throw new Error("Constants vector contains invalid values");
+                }
             }
 
-            const detA = calculateDeterminant(matrix);
+            // Calculate main determinant
+            const detA = det(matrix);
             setMainDet(detA);
 
             if (Math.abs(detA) < 1e-10) {
@@ -84,21 +61,26 @@ const CramerCalculator = () => {
             }
 
             const solutions = [];
+            // Calculate solution for each variable
             for (let i = 0; i < size; i++) {
+                // Create matrix for current variable by replacing i-th column with constants
                 const modifiedMatrix = matrix.map((row, rowIndex) =>
-                    row.map((col, colIndex) => (colIndex === i ? constants[rowIndex] : col))
+                    row.map((col, colIndex) => 
+                        colIndex === i ? constants[rowIndex] : col
+                    )
                 );
-
-                const detModified = calculateDeterminant(modifiedMatrix);
+                
+                // Calculate determinant and solution
+                const detModified = det(modifiedMatrix);
                 const solution = detModified / detA;
-
+                
                 solutions.push({
                     variable: `x${i + 1}`,
                     value: solution,
                     determinant: detModified
                 });
             }
-
+            
             setResults(solutions);
         } catch (error) {
             alert(error.message || "Error in calculation. Please check your input values.");
