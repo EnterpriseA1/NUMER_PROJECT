@@ -63,7 +63,6 @@ export const ResultsTable = ({ results }) => {
                 <thead>
                     <tr className="bg-gray-800 text-white">
                         <th className="px-4 py-2 border border-gray-700">Variable</th>
-                        <th className="px-4 py-2 border border-gray-700">Determinant</th>
                         <th className="px-4 py-2 border border-gray-700">Value</th>
                     </tr>
                 </thead>
@@ -71,7 +70,6 @@ export const ResultsTable = ({ results }) => {
                     {results.map((result, index) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"}>
                             <td className="border px-4 py-2">{result.variable}</td>
-                            <td className="border px-4 py-2">{result.determinant.toFixed(6)}</td>
                             <td className="border px-4 py-2">{result.value.toFixed(6)}</td>
                         </tr>
                     ))}
