@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NavbarComponent from "../component/Navbar";
 import { MatrixInput, SizeInput, ResultsTable } from "../component/MatrixInput";
 
-const GaussCalculator = () => {
+const GaussJordanCalculator = () => {
     const [sizeInput, setSizeInput] = useState("3");
     const [size, setSize] = useState(3);
     const [matrix, setMatrix] = useState(Array(3).fill(0).map(() => Array(3).fill(0)));
@@ -37,10 +37,9 @@ const GaussCalculator = () => {
         }
     };
 
-    // Helper function to copy a matrix
     const copyMatrix = (mat) => mat.map(row => [...row]);
 
-    const gaussianElimination = () => {
+    const gaussJordanElimination = () => {
         try {
             // Validate input values
             for(let i = 0; i < size; i++) {
@@ -62,7 +61,7 @@ const GaussCalculator = () => {
             // Store initial matrix
             allSteps.push(copyMatrix(augMatrix));
 
-            // Forward elimination
+            // Gauss-Jordan Elimination
             for (let i = 0; i < n; i++) {
                 // Normalize the current row by the pivot
                 const pivot = augMatrix[i][i];
@@ -75,8 +74,17 @@ const GaussCalculator = () => {
                 }
                 allSteps.push(copyMatrix(augMatrix));
 
-                // Eliminate the current column from all rows below
+                // Forward elimination: Eliminate current column from rows below
                 for (let j = i + 1; j < n; j++) {
+                    const factor = augMatrix[j][i];
+                    for (let k = 0; k <= n; k++) {
+                        augMatrix[j][k] -= factor * augMatrix[i][k];
+                    }
+                    allSteps.push(copyMatrix(augMatrix));
+                }
+
+                // Back elimination: Eliminate current column from rows above
+                for (let j = i - 1; j >= 0; j--) {
                     const factor = augMatrix[j][i];
                     for (let k = 0; k <= n; k++) {
                         augMatrix[j][k] -= factor * augMatrix[i][k];
@@ -85,19 +93,10 @@ const GaussCalculator = () => {
                 }
             }
 
-            // Back substitution
-            const solution = new Array(n).fill(0);
-            for (let i = n - 1; i >= 0; i--) {
-                solution[i] = augMatrix[i][n];
-                for (let j = i + 1; j < n; j++) {
-                    solution[i] -= augMatrix[i][j] * solution[j];
-                }
-            }
-
-            // Format results
-            const solutions = solution.map((value, index) => ({
+            // Extract solutions directly from the last column
+            const solutions = augMatrix.map((row, index) => ({
                 variable: `x${index + 1}`,
-                value: value,
+                value: row[n]
             }));
 
             setResults(solutions);
@@ -114,7 +113,7 @@ const GaussCalculator = () => {
             <NavbarComponent />
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6">
-                    <h2 className="text-3xl font-bold text-center mb-6">Gaussian Elimination Calculator</h2>
+                    <h2 className="text-3xl font-bold text-center mb-6">Gauss-Jordan Calculator</h2>
 
                     <SizeInput 
                         sizeInput={sizeInput} 
@@ -134,7 +133,7 @@ const GaussCalculator = () => {
 
                             <div className="flex justify-center mb-6">
                                 <button
-                                    onClick={gaussianElimination}
+                                    onClick={gaussJordanElimination}
                                     className="bg-gray-800 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
                                 >
                                     Solve System
@@ -176,4 +175,4 @@ const GaussCalculator = () => {
     );
 };
 
-export default GaussCalculator;
+export default GaussJordanCalculator;
