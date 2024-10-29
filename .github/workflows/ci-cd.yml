@@ -5,7 +5,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -23,10 +22,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20'
-        cache: 'npm'
+        # ลบ cache: 'npm' ออก
         
     - name: Install dependencies
-      run: npm ci
+      run: npm install  # เปลี่ยนจาก npm ci เป็น npm install
       
     - name: Build
       run: npm run build
@@ -40,8 +39,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        context: ./numer-react-vite-project
-        file: ../numer-react-vite-project/Dockerfile  
+        context: .
+        file: ./Dockerfile
         push: true
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/numer-app:latest
