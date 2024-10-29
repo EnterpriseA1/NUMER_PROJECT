@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: .
+        working-directory: ./numer-react-vite-project  # แก้ path ให้ถูกต้อง
 
     steps:
     - name: Checkout code
@@ -22,10 +22,9 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20'
-        # ลบ cache: 'npm' ออก
         
     - name: Install dependencies
-      run: npm install  # เปลี่ยนจาก npm ci เป็น npm install
+      run: npm install
       
     - name: Build
       run: npm run build
@@ -39,8 +38,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        context: .
-        file: ./Dockerfile
+        context: ./numer-react-vite-project  # แก้ path ให้ถูกต้อง
+        file: ./numer-react-vite-project/Dockerfile  # แก้ path ให้ถูกต้อง
         push: true
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/numer-app:latest
