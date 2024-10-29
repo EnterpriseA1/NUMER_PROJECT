@@ -40,8 +40,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        context: .
-        file: ./Dockerfile  # แก้ไขจาก DockerFile เป็น Dockerfile
+        context: ./numer-react-vite-project
+        file: ../numer-react-vite-project/Dockerfile  
         push: true
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/numer-app:latest
