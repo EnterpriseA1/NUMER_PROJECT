@@ -12,7 +12,7 @@ const BisectionMethod = () => {
     const [root, setRoot] = useState(0);
     const [iterations, setIterations] = useState([]);
     const [savedResults, setSavedResults] = useState([]);
-    const API_URL = 'http://localhost:5000/api';
+    const API_URL = 'https://numer-serverside.vercel.app';
 
     // Fetch saved results on component mount
     useEffect(() => {
