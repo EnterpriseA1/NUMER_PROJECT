@@ -5,10 +5,10 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const connectdb = require("./config/Dbconnect");
-const routes = require("./routes");
+const routes = require("./routes/index");
 
 
-connectdb();
+connectdb() ;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
