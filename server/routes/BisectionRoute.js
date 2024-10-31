@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {read, list, create } = require('../controller/BisectionController');
+const { list, create } = require('../controller/BisectionController');
 
 router.get('/', list);
 
