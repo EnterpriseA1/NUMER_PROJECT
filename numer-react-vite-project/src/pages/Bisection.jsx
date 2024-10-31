@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
 import { evaluate } from 'mathjs';
+import axios from 'axios'; // Make sure to install axios: npm install axios
 
 const BisectionMethod = () => {
     const [equation, setEquation] = useState("x^4-13");
@@ -10,14 +11,46 @@ const BisectionMethod = () => {
     const [xr, setXR] = useState(0);
     const [root, setRoot] = useState(0);
     const [iterations, setIterations] = useState([]);
+    const [savedResults, setSavedResults] = useState([]);
+    const API_URL = 'http://localhost:5000/api';
+
+    // Fetch saved results on component mount
+    useEffect(() => {
+        fetchSavedResults();
+    }, []);
+
+    const fetchSavedResults = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/bisection`);
+            setSavedResults(response.data);
+        } catch (error) {
+            console.error('Error fetching saved results:', error);
+        }
+    };
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
-    // เคลียร์ค่าเมื่อมีการเปลี่ยนแปลง equation
     useEffect(() => {
         setRoot(0);
         setIterations([]);
     }, [equation]);
+
+    const saveResult = async (xm, lastError) => {
+        try {
+            const resultData = {
+                Equation: equation,
+                x_start: xl,
+                x_end: xr,
+                result: xm,
+                error: lastError.toString()
+            };
+
+            await axios.post(`${API_URL}/bisection`, resultData);
+            fetchSavedResults(); // Refresh the list after saving
+        } catch (error) {
+            console.error('Error saving result:', error);
+        }
+    };
 
     const calculateBisection = (xl, xr) => {
         try {
@@ -25,31 +58,38 @@ const BisectionMethod = () => {
             let iter = 0;
             const tolerance = 0.00001;
             const newIterations = [];
+            let lastError = 0;
 
             do {
-                xm = (xl + xr) / 2.0; // Calculate Xm
+                xm = (xl + xr) / 2.0;
                 const scopeXr = { x: xr };
                 const scopeXm = { x: xm };
                 fXr = evaluate(equation, scopeXr);
                 fXm = evaluate(equation, scopeXm);
                 iter++;
-                if (xm == 0) {
+                
+                if (xm === 0) {
                     break;
                 }
+                
                 if (fXm * fXr > 0) {
                     ea = error(xr, xm);
-                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr,Error: ea });
-                    xr = xm; // Update XR
+                    lastError = ea;
+                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr, Error: ea });
+                    xr = xm;
                 } else {
                     ea = error(xl, xm);
-                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr ,Error: ea});
-                    xl = xm; // Update XL
+                    lastError = ea;
+                    newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr, Error: ea });
+                    xl = xm;
                 }
             } while (ea > tolerance);
 
             setRoot(xm);
             setIterations(newIterations);
+            saveResult(xm, lastError);
         } catch (err) {
+            console.error('Calculation error:', err);
             setRoot(0);
             setIterations([]);
         }

@@ -13,7 +13,7 @@ import GaussCalculator from './pages/Gauss.jsx'
 import GaussJordanCalculator from './pages/Gauss-Jordan.jsx'
 import NewtonDividedDifference from './pages/Newton-Divide.jsx'
 import LagrangeInterpolation from './pages/Lagrange.jsx'
-
+import BisectionHistory from './pages/History.jsx'
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <Routes>
@@ -29,6 +29,7 @@ createRoot(document.getElementById('root')).render(
     <Route path="/Gauss-Jordan" element={<GaussJordanCalculator />}></Route>
     <Route path="/Newton-Divide" element={<NewtonDividedDifference />}></Route>
     <Route path="/Lagrange" element={<LagrangeInterpolation />}></Route>
+    <Route path="/History" element={<BisectionHistory />}></Route>
     </Routes>
   </BrowserRouter>,
 )
