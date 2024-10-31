@@ -2,7 +2,7 @@
 const BisectionDB = require('../models/BisectionDB');
 
 // Get single bisection
-exports.read = async (req, res) => {
+const read = async (req, res) => {
     try {
         const { id } = req.params;
         const result = await BisectionDB.findById(id);
@@ -17,18 +17,18 @@ exports.read = async (req, res) => {
 };
 
 // Get all bisections
-exports.list = async (req, res) => {
+const list = async (req, res) => {
     try {
-        const results = await BisectionDB.find({});
-        res.json(results);
+        const result = await BisectionDB.find();
+        res.json(result);
     } catch (error) {
         console.error('List error:', error);
         res.status(500).json({ error: 'Server Error' });
     }
 };
 
-// Create new bisection
-exports.create = async (req, res) => {
+// Create new bisection     
+const create = async (req, res) => {
     try {
         const result = (await BisectionDB.create(req.body));
         res.send(result);
@@ -37,3 +37,5 @@ exports.create = async (req, res) => {
         res.status(500).json({ error: 'Server Error' });
     }
 };
+
+module.exports = { read, list, create };
