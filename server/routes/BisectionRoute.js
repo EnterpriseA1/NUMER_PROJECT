@@ -3,10 +3,10 @@ const router = express.Router();
 
 const {read, list, create } = require('../controller/BisectionController');
 
-router.get('/bisection', list);
-router.get('/bisection/:id', read);
+router.get('/', list);
+router.get('/:id', read);
 
-router.post('/bisection',create);
+router.post('/',create);
 
 
 /*router.put('/bisection', (req, res) => {
