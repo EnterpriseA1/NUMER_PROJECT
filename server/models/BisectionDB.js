@@ -24,6 +24,6 @@ const bisectionSchema = new mongoose.Schema({
     // Add any other fields you need
 }, { timestamps: true });
 
-const BisectionDB = mongoose.model('Bisection', bisectionSchema);
+const BisectionDB = mongoose.model('bisections', bisectionSchema);
 
 module.exports = BisectionDB;

@@ -20,7 +20,7 @@ const BisectionDB = require('../models/BisectionDB');
 const list = async (req, res) => {
     try {
         try {
-            /*const result = await BisectionDB.find();*/
+            const result = await BisectionDB.find();
             res.json({message: "NAGIG"});
         } catch (error) {
             console.error('List error:', error);
