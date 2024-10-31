@@ -19,9 +19,14 @@ const BisectionDB = require('../models/BisectionDB');
 // Get all bisections
 const list = async (req, res) => {
     try {
-        const result = await BisectionDB.find();
-        res.json({message: "NAGIG"});
-    } catch (error) {
+        try {
+            const result = await BisectionDB.find();
+            res.json({message: "NAGIG"});
+        } catch (error) {
+            console.error('List error:', error);
+            res.status(500).json({ error: 'Server Error' });
+        }
+    }catch (error) {
         console.error('List error:', error);
         res.status(500).json({ error: 'Server Error' });
     }
