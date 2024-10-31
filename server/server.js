@@ -7,11 +7,14 @@ const morgan = require("morgan");
 const connectdb = require("./config/Dbconnect");
 const routes = require("./routes");
 
+
+connectdb();
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-connectdb();
+
 
 app.use(morgan("dev"));
 app.use(cors());
