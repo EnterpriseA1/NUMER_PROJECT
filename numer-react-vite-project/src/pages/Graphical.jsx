@@ -33,7 +33,6 @@ const GraphicalMethod = () => {
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
     useEffect(() => {
-        setRoot(0);
         setIterations([]);
     }, [equation]);
 
