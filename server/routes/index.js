@@ -8,5 +8,5 @@ const bisectionRoute = require('./BisectionRoute');
 // Register all routes
 router.use('/bisection', bisectionRoute);
 // router.use('/newpath', newRoute);
-
+ 
 module.exports = router;
