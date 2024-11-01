@@ -44,14 +44,23 @@ const BisectionMethod = () => {
                 result: xm,
                 error: lastError.toString()
             };
-
-            await axios.post(`${API_URL}/bisection`, resultData);
-            fetchSavedResults(); // Refresh the list after saving
+    
+            console.log('Sending data:', resultData); // Debug log
+    
+            const response = await axios.post(`${API_URL}/bisection`, resultData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Save response:', response.data); // Debug log
+            await fetchSavedResults();
         } catch (error) {
-            console.error('Error saving result:', error);
+            console.error('Error saving result:', error.response?.data || error);
+            // You might want to show this error to the user
+            alert('Failed to save result: ' + (error.response?.data?.error || error.message));
         }
     };
-
     const calculateBisection = (xl, xr) => {
         try {
             let xm, fXm, fXr, ea;
