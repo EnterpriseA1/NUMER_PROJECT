@@ -32,9 +32,6 @@ const GraphicalMethod = () => {
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
-    useEffect(() => {
-        setIterations([]);
-    }, [equation]);
 
     const saveResult = async (xm, lastError) => {
         try {
