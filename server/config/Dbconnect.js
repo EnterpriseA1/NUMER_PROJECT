@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectdb = async () => {
     try {
-        await mongoose.connect('mongodb+srv://EnterpriseA:DhZRZHHQQ9Erm4E@cluster0.7nfhz.mongodb.net/BisectionDB', {
+        await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
