@@ -19,14 +19,13 @@ const BisectionDB = require('../models/BisectionDB');
 // Get all bisections
 const list = async (req, res) => {
     try {
-        try {
-            const result = await BisectionDB.find();
-            res.json({message: "NAGIG"});
-        } catch (error) {
-            console.error('List error:', error);
-            res.status(500).json({ error: 'Server Error' });
-        }
-    }catch (error) {
+        // Add timeout to the database query
+        const result = await BisectionDB.find().maxTimeMS(5000).lean();
+        
+        // Send response
+        res.json({ message: "NAGIG" });
+        
+    } catch (error) {
         console.error('List error:', error);
         res.status(500).json({ error: 'Server Error' });
     }
