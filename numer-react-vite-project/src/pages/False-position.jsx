@@ -10,9 +10,57 @@ const FalsePositionMethod = () => {
     const [xr, setXR] = useState(0);
     const [root, setRoot] = useState(0);
     const [iterations, setIterations] = useState([]);
+    const [savedResults, setSavedResults] = useState([]);
+    const API_URL = 'https://numer-serverside.vercel.app/api';
+     // Fetch saved results on component mount
+    useEffect(() => {
+        fetchSavedResults();
+    }, []);
+
+    const fetchSavedResults = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/bisection`);
+            setSavedResults(response.data);
+        } catch (error) {
+            console.error('Error fetching saved results:', error);
+        }
+    };
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
+    useEffect(() => {
+        setRoot(0);
+        setIterations([]);
+    }, [equation]);
+
+    const saveResult = async (xm, lastError) => {
+        try {
+            const resultData = {
+                method: 'False-Position',
+                Equation: equation,
+                x_start: xl,
+                x_end: xr,
+                result: xm,
+                error: lastError.toString()
+            };
+    
+            console.log('Sending data:', resultData); // Debug log
+    
+            const response = await axios.post(`${API_URL}/bisection`, resultData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Save response:', response.data); // Debug log
+            await fetchSavedResults();
+        } catch (error) {
+            console.error('Error saving result:', error.response?.data || error);
+            // You might want to show this error to the user
+            alert('Failed to save result: ' + (error.response?.data?.error || error.message));
+        }
+    };
+    
     const calculateFalsePosition = (xl, xr) => {
         let xm, fXm, fXl, fXr, ea;
         let iter = 0;
@@ -44,6 +92,7 @@ const FalsePositionMethod = () => {
 
         setRoot(xm);
         setIterations(newIterations);
+        saveResult(xm, ea);
     };
 
     return (
