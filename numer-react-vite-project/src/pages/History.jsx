@@ -18,7 +18,7 @@ const BisectionHistory = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get('Http://numer-serverside.vercel.app/api/bisection');
+            const response = await axios.get('http://numer-serverside.vercel.app/api/bisection');
             setData(response.data);
         } catch (err) {
             console.error('Error fetching data:', err);
