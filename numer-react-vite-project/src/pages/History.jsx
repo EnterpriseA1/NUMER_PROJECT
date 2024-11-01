@@ -9,46 +9,20 @@ const BisectionHistory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'desc' });
-    const [retryCount, setRetryCount] = useState(0);
-    const maxRetries = 3;
 
     useEffect(() => {
-        fetchData(0);
+        fetchData();
     }, []);
 
-    const fetchData = async (retry = 0) => {
+    const fetchData = async () => {
         try {
             setLoading(true);
             setError(null);
-            console.log('Fetching data...'); // Debug log
-
-            const response = await axios.get('https://numer-serverside.vercel.app/api/bisection', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            console.log('Raw response:', response.data); // Debug log
-
-            if (response.data && response.data.data) {
-                setData(response.data.data);
-            } else {
-                if (retry < maxRetries) {
-                    console.log(`Retrying... Attempt ${retry + 1} of ${maxRetries}`);
-                    setTimeout(() => fetchData(retry + 1), 1000 * (retry + 1));
-                    return;
-                }
-                throw new Error('Invalid response format');
-            }
+            const response = await axios.get('http://numer-serverside.vercel.app/api');
+            setData(response.data);
         } catch (err) {
-            console.error('Detailed error:', err.response || err);
-            if (retry < maxRetries) {
-                console.log(`Retrying... Attempt ${retry + 1} of ${maxRetries}`);
-                setTimeout(() => fetchData(retry + 1), 1000 * (retry + 1));
-                return;
-            }
-            setError(err.response?.data?.error || 'Failed to fetch calculation history');
+            console.error('Error fetching data:', err);
+            setError('Failed to fetch calculation history. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -87,7 +61,7 @@ const BisectionHistory = () => {
         return null;
     };
 
-    if (loading && !data.length) {
+    if (loading) {
         return (
             <>
                 <NavbarComponent />
@@ -109,14 +83,11 @@ const BisectionHistory = () => {
                         <h1 className="text-2xl font-bold text-gray-800">Calculation History</h1>
                     </div>
                     <button 
-                        onClick={() => fetchData(0)}
-                        disabled={loading}
-                        className={`flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors ${
-                            loading ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+                        onClick={fetchData}
+                        className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
                     >
-                        <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                        {loading ? 'Refreshing...' : 'Refresh'}
+                        <RefreshCcw className="w-4 h-4" />
+                        Refresh
                     </button>
                 </div>
 
@@ -188,48 +159,38 @@ const BisectionHistory = () => {
                                     </th>
                                 </tr>
                             </thead>
-                            {data && data.length > 0 ? (
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {data.map((item, index) => (
-                                        <tr 
-                                            key={item._id || index} 
-                                            className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
-                                        >
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <MathEquation equation={`$${item.Equation || ''}$`} />
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {item.x_start != null ? Number(item.x_start).toFixed(4) : 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {item.x_end != null ? Number(item.x_end).toFixed(4) : 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {item.result != null ? Number(item.result).toPrecision(7) : 'N/A'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {item.error != null ? Number(item.error).toFixed(6) : 'N/A'}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            ) : (
-                                <tbody>
-                                    <tr>
-                                        <td colSpan="6" className="text-center py-4 text-gray-500">
-                                            No data available
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {data.map((item, index) => (
+                                    <tr 
+                                        key={item._id} 
+                                        className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                                    >
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {new Date(item.createdAt).toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <MathEquation equation={`$${item.Equation}$`} />
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {Number(item.x_start).toFixed(4)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {Number(item.x_end).toFixed(4)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {Number(item.result).toPrecision(7)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {Number(item.error).toFixed(6)}
                                         </td>
                                     </tr>
-                                </tbody>
-                            )}
+                                ))}
+                            </tbody>
                         </table>
                     </div>
                 </div>
 
-                {data.length === 0 && !error && !loading && (
+                {data.length === 0 && !error && (
                     <div className="text-center py-8">
                         <Hash className="mx-auto h-12 w-12 text-gray-400" />
                         <h3 className="mt-2 text-sm font-medium text-gray-900">No calculations yet</h3>
