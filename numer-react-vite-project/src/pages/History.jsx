@@ -114,44 +114,43 @@ const History = () => {
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button>
+                                        <button
+                                            className="flex items-center gap-1"
+                                        >
                                             Method
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button
-                                            className="flex items-center gap-1"
-                                            onClick={() => sortData('Equation')}
-                                        >
+                                        <button>
                                             Equation
-                                            {getSortIcon('Equation')}
+                                           
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <button
                                             className="flex items-center gap-1"
-                                            onClick={() => sortData('input')}
                                         >
+                                           
+                                       
                                             Input
-                                            {getSortIcon('input')}
+                                            
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <button
                                             className="flex items-center gap-1"
-                                            onClick={() => sortData('result')}
                                         >
                                             Result
-                                            {getSortIcon('result')}
+                                            
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <button
                                             className="flex items-center gap-1"
-                                            onClick={() => sortData('error')}
+                                            
                                         >
                                             Error (%)
-                                            {getSortIcon('error')}
+                                           
                                         </button>
                                     </th>
                                 </tr>
