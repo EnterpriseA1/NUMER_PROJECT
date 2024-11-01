@@ -2,16 +2,15 @@ const mongoose = require('mongoose');
 
 const connectdb = async () => {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/BisectionDB', {
+        await mongoose.connect('mongodb+srv://EnterpriseA:DhZRZHHQQ9Erm4E@cluster0.7nfhz.mongodb.net/BisectionDB', {
             useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 3000, // Reduce timeout
-            socketTimeoutMS: 5000,
+            useUnifiedTopology: true
         });
         console.log('Connected to MongoDB');
     } catch (error) {
-        console.log('MongoDB connection error:', error);
+        console.error('MongoDB Connection Error:', error);
+        process.exit(1);
     }
-}
+};
 
 module.exports = connectdb;

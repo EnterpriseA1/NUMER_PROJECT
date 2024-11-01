@@ -13,6 +13,6 @@
       }
     ],
     "env": {
-    "MONGODB_URI": "mongodb://127.0.0.1:27017/BisectionDB"
+    "MONGODB_URI": "mongodb+srv://EnterpriseA:DhZRZHHQQ9Erm4E@cluster0.7nfhz.mongodb.net/BisectionDB"
   }
   }
