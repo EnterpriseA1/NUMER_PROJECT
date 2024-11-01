@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
@@ -14,6 +14,56 @@ const GraphicalMethod = () => {
         iter: 0,
         iterations: []
     });
+    const [savedResults, setSavedResults] = useState([]);
+    const API_URL = 'https://numer-serverside.vercel.app/api';
+     // Fetch saved results on component mount
+     useEffect(() => {
+        fetchSavedResults();
+    }, []);
+
+    const fetchSavedResults = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/bisection`);
+            setSavedResults(response.data);
+        } catch (error) {
+            console.error('Error fetching saved results:', error);
+        }
+    };
+
+    const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
+
+    useEffect(() => {
+        setRoot(0);
+        setIterations([]);
+    }, [equation]);
+
+    const saveResult = async (xm, lastError) => {
+        try {
+            const resultData = {
+                method: 'Graphical',
+                Equation: equation,
+                x_start: xl,
+                x_end: xr,
+                result: xm,
+                error: lastError.toString()
+            };
+    
+            console.log('Sending data:', resultData); // Debug log
+    
+            const response = await axios.post(`${API_URL}/bisection`, resultData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Save response:', response.data); // Debug log
+            await fetchSavedResults();
+        } catch (error) {
+            console.error('Error saving result:', error.response?.data || error);
+            // You might want to show this error to the user
+            alert('Failed to save result: ' + (error.response?.data?.error || error.message));
+        }
+    };
 
     const calculateGraphical = (xl, xr) => {
         // Calculate step size using logarithm
@@ -22,19 +72,9 @@ const GraphicalMethod = () => {
             if (step % 1 === 0) return Number(pow(10, step - 1));
             return Number(pow(10, floor(step)));
         };
+       
 
-        const result = {
-            result: 0,
-            iter: 0,
-            iterations: [],
-            error: null
-        };
-
-        // Validation
-        if (!equation || equation.trim().length === 0) {
-            alert('Invalid function');
-            return;
-        }
+        
 
         if (xl >= xr) {
             alert('X Start must be less than X End');
@@ -97,13 +137,14 @@ const GraphicalMethod = () => {
             }
             temp = newTemp;
         }
-
         setResult({
             result: x,
             iter: iter,
             iterations: [...plotPoints, ...iterations]
         });
+
         setHasCalculated(true);
+        saveResult(x, error(xl, x));
     };
 
     return (
