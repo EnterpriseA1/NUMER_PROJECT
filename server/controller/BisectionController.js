@@ -1,30 +1,36 @@
 
 const BisectionDB = require('../models/BisectionDB');
 
+// Get single bisection
+/*const   read = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await BisectionDB.findById(id);
+        if (!result) {
+            return res.status(404).json({ message: 'No data found' });
+        }
+        res.json(result);
+    } catch (error) {
+        console.error('Read error:', error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+};*/
 
 // Get all bisections
 const list = async (req, res) => {
     try {
-        const data = await BisectionDB.find()
-            .limit(5)
-            .lean();
-
-        console.log('Query result:', data); // Debug log
-
-        return res.status(200).json({
-            success: true,
-            data: data || []
-        });
-
+        // Add timeout to the database query
+        const result = await BisectionDB.find().maxTimeMS(5000).lean();
+        
+        // Send response
+        res.json({ message: "NAGIG" });
+        
     } catch (error) {
-        console.error('Detailed error:', error); // Debug log
-        return res.status(500).json({
-            success: false,
-            error: 'Database query failed',
-            details: error.message
-        });
+        console.error('List error:', error);
+        res.status(500).json({ error: 'Server Error' });
     }
 };
+
 // Create new bisection     
 const create = async (req, res) => {
     try {
