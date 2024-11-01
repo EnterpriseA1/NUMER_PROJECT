@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
 import { evaluate } from "mathjs";
+import axios from 'axios';
 
 const SecantMethod = () => {
     const [equation, setEquation] = useState("x^4-13");
@@ -10,6 +11,55 @@ const SecantMethod = () => {
     const [x1, setX1] = useState(2);
     const [root, setRoot] = useState(0);
     const [iterations, setIterations] = useState([]);
+    const [savedResults, setSavedResults] = useState([]);
+    const API_URL = 'https://numer-serverside.vercel.app/api';
+     // Fetch saved results on component mount
+    useEffect(() => {
+        fetchSavedResults();
+    }, []);
+
+    const fetchSavedResults = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/bisection`);
+            setSavedResults(response.data);
+        } catch (error) {
+            console.error('Error fetching saved results:', error);
+        }
+    };
+
+    useEffect(() => {
+        setRoot(0);
+        setIterations([]);
+    }, [equation]);
+
+    const saveResult = async (xm, lastError) => {
+        try {
+            const resultData = {
+                method: 'Secant Method',
+                Equation: equation,
+                x_start: x0,  
+                x_end: x1,
+                result: xm,
+                error: lastError.toString()
+            };
+    
+            console.log('Sending data:', resultData); // Debug log
+    
+            const response = await axios.post(`${API_URL}/bisection`, resultData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Save response:', response.data); // Debug log
+            await fetchSavedResults();
+        } catch (error) {
+            console.error('Error saving result:', error.response?.data || error);
+            // You might want to show this error to the user
+            alert('Failed to save result: ' + (error.response?.data?.error || error.message));
+        }
+    };
+
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
@@ -55,6 +105,7 @@ const SecantMethod = () => {
 
         setRoot(x_next);
         setIterations(newIterations);
+        saveResult(x_next,newIterations[newIterations.length - 1].error);
     };
 
     // Generate points for plotting

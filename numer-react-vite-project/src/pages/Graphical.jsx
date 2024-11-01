@@ -32,6 +32,7 @@ const GraphicalMethod = () => {
 
     const error = (xOld, xNew) => Math.abs((xNew - xOld) / xNew) * 100;
 
+    
 
     const saveResult = async (xm, lastError) => {
         try {
@@ -60,39 +61,40 @@ const GraphicalMethod = () => {
             alert('Failed to save result: ' + (error.response?.data?.error || error.message));
         }
     };
-
+    const calculateError = (currentX, prevX) => {
+        return Math.abs((currentX - prevX) / currentX) * 100;
+    };
     const calculateGraphical = (xl, xr) => {
-        // Calculate step size using logarithm
         const calculateStep = (xStart, xEnd) => {
             const step = log(xEnd - xStart, 10);
             if (step % 1 === 0) return Number(pow(10, step - 1));
             return Number(pow(10, floor(step)));
         };
-       
-
-        
-
+    
         if (xl >= xr) {
             alert('X Start must be less than X End');
             return;
         }
-
+    
         let step = calculateStep(xl, xr);
         const MAX_ITER = 1000;
+        const TOLERANCE = 0.0001;
         let iter = 0;
         let x = xl;
+        let prevX = x;
         let temp;
-
+    
         try {
             temp = evaluate(equation, { x: xl });
         } catch (error) {
             alert('Invalid function');
             return;
         }
-
+    
         const iterations = [];
         let newTemp;
-
+        let lastError = 0;
+    
         // Generate plot points for smooth curve
         const plotPoints = [];
         const plotStep = (xr - xl) / 200;
@@ -104,7 +106,7 @@ const GraphicalMethod = () => {
                 continue;
             }
         }
-
+    
         // Main iteration
         while (iter < MAX_ITER) {
             iter += 1;
@@ -112,20 +114,28 @@ const GraphicalMethod = () => {
                 alert('Max iteration reached');
                 break;
             }
-
+    
             newTemp = evaluate(equation, { x });
-            iterations.push({ x: Number(x), y: newTemp });
-
-            if (abs(newTemp) < 0.0001) {
+            const error = calculateError(x, prevX);
+            lastError = error;
+            
+            iterations.push({ 
+                x: Number(x), 
+                y: newTemp, 
+                error: error 
+            });
+    
+            if (abs(newTemp) < TOLERANCE) {
                 break;
             }
-
+    
             if (temp * newTemp < 0) {
                 x -= step;
                 step /= 10;
                 newTemp = evaluate(equation, { x });
             }
-
+    
+            prevX = x;
             if (x === xr) break;
             x += step;
             if (x > xr) {
@@ -133,14 +143,15 @@ const GraphicalMethod = () => {
             }
             temp = newTemp;
         }
+    
         setResult({
             result: x,
             iter: iter,
             iterations: [...plotPoints, ...iterations]
         });
-
+    
         setHasCalculated(true);
-        saveResult(x, error(xl, x));
+        saveResult(x, lastError);
     };
 
     return (
@@ -250,6 +261,7 @@ const GraphicalMethod = () => {
                                 <th className="px-4 py-2 border border-gray-700">Iteration</th>
                                 <th className="px-4 py-2 border border-gray-700">X</th>
                                 <th className="px-4 py-2 border border-gray-700">f(x)</th>
+                                <th className="px-4 py-2 border border-gray-700">Error</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -258,6 +270,7 @@ const GraphicalMethod = () => {
                                     <td className="border px-4 py-2">{index + 1}</td>
                                     <td className="border px-4 py-2">{point.x.toPrecision(7)}</td>
                                     <td className="border px-4 py-2">{point.y.toPrecision(7)}</td>
+                                    <td className="border px-4 py-2">{point.error.toPrecision(7)}</td>
                                 </tr>
                             )) : (
                                 <tr>
