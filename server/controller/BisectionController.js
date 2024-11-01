@@ -5,15 +5,26 @@ const BisectionDB = require('../models/BisectionDB');
 // Get all bisections
 const list = async (req, res) => {
     try {
-        // Use the optimized static method
-        const results = await BisectionDB.findLatest(5);
-        return res.json(results);
+        const data = await BisectionDB.find()
+            .limit(5)
+            .lean();
+
+        console.log('Query result:', data); // Debug log
+
+        return res.status(200).json({
+            success: true,
+            data: data || []
+        });
+
     } catch (error) {
-        console.error('List error:', error);
-        return res.status(500).json({ error: 'Server Error' });
+        console.error('Detailed error:', error); // Debug log
+        return res.status(500).json({
+            success: false,
+            error: 'Database query failed',
+            details: error.message
+        });
     }
 };
-
 // Create new bisection     
 const create = async (req, res) => {
     try {
