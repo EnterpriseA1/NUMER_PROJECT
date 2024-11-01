@@ -4,15 +4,22 @@ const BisectionDB = require('../models/BisectionDB');
 
 // Get all bisections
 const list = async (req, res) => {
-    try {
-        // Simple find with limit
-        const result = await BisectionDB.find()
-            .limit(20)  // Limit to 20 documents
-            .select('-__v')  // Exclude version field
-            .lean();  // Convert to plain JavaScript object
+    // Add timeout to the request
+    res.setTimeout(5000, () => {
+        return res.status(504).json({ error: 'Request timeout' });
+    });
 
-        return res.json({
-            message: "NAGIG",
+    try {
+        // Simple query with no additional operations
+        const result = await BisectionDB.find()
+            .limit(10)  // Limit the results
+            .select('Equation x_start x_end result error')  // Select only needed fields
+            .lean()
+            .exec();  // Execute the query immediately
+
+        // Send immediate response
+        return res.status(200).json({
+            status: 'success',
             data: result
         });
 
