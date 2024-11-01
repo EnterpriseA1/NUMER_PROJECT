@@ -3,7 +3,7 @@ import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
 import { evaluate, log, pow, floor, abs } from 'mathjs';
-
+import axios from 'axios';
 const GraphicalMethod = () => {
     const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);
