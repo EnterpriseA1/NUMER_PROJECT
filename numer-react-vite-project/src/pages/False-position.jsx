@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
 import { evaluate } from "mathjs";
+import axios from 'axios'; 
+
+
 
 const FalsePositionMethod = () => {
-    const METHOD_NAME = "False-Position";
     const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);
     const [xr, setXR] = useState(0);
@@ -14,6 +16,7 @@ const FalsePositionMethod = () => {
     const [savedResults, setSavedResults] = useState([]);
     const API_URL = 'https://numer-serverside.vercel.app/api';
 
+     // Fetch saved results on component mount
     useEffect(() => {
         fetchSavedResults();
     }, []);
@@ -37,69 +40,63 @@ const FalsePositionMethod = () => {
     const saveResult = async (xm, lastError) => {
         try {
             const resultData = {
-                method: METHOD_NAME,
+                method: 'False-Position',
                 Equation: equation,
                 x_start: xl,
                 x_end: xr,
                 result: xm,
                 error: lastError.toString()
             };
-
-            console.log('Sending data:', resultData);
-
+    
+            console.log('Sending data:', resultData); // Debug log
+    
             const response = await axios.post(`${API_URL}/bisection`, resultData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            console.log('Save response:', response.data);
+    
+            console.log('Save response:', response.data); // Debug log
             await fetchSavedResults();
         } catch (error) {
             console.error('Error saving result:', error.response?.data || error);
+            // You might want to show this error to the user
             alert('Failed to save result: ' + (error.response?.data?.error || error.message));
         }
     };
-
+    
     const calculateFalsePosition = (xl, xr) => {
-        try {
-            let xm, fXm, fXl, fXr, ea;
-            let iter = 0;
-            const tolerance = 0.00001;
-            const newIterations = [];
-            let lastError = 0;
+        let xm, fXm, fXl, fXr, ea;
+        let iter = 0;
+        const tolerance = 0.00001;
+        const newIterations = [];
 
-            do {
-                const scopeXl = { x: xl };
-                const scopeXr = { x: xr };
-                fXl = evaluate(equation, scopeXl);
-                fXr = evaluate(equation, scopeXr);
+        do {
+            const scopeXl = { x: xl };
+            const scopeXr = { x: xr };
+            fXl = evaluate(equation, scopeXl);
+            fXr = evaluate(equation, scopeXr);
 
-                xm = xl - (fXl * (xr - xl)) / (fXr - fXl);
-                const scopeXm = { x: xm };
-                fXm = evaluate(equation, scopeXm);
-                iter++;
+            // Calculate Xm using the False Position formula
+            xm = xl - (fXl * (xr - xl)) / (fXr - fXl);
+            const scopeXm = { x: xm };
+            fXm = evaluate(equation, scopeXm);
+            iter++;
 
-                ea = error(iter > 1 ? newIterations[iter - 2].Xm : xl, xm);
-                lastError = ea;
-                newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr, Error: ea });
+            newIterations.push({ iteration: iter, Xl: xl, Xm: xm, Xr: xr, Error: error(xl, xm) });
 
-                if (fXm * fXl < 0) {
-                    xr = xm;
-                } else {
-                    xl = xm;
-                }
-            } while (ea > tolerance);
+            if (fXm * fXl < 0) {
+                xr = xm; // Update XR
+            } else {
+                xl = xm; // Update XL
+            }
 
-            setRoot(xm);
-            setIterations(newIterations);
-            saveResult(xm, lastError);
-        } catch (err) {
-            console.error('Calculation error:', err);
-            alert('Error during calculation: ' + err.message);
-            setRoot(0);
-            setIterations([]);
-        }
+            ea = Math.abs(fXm); // Update error based on function value
+        } while (ea > tolerance);
+
+        setRoot(xm);
+        setIterations(newIterations);
+        saveResult(xm, ea);
     };
 
     return (
