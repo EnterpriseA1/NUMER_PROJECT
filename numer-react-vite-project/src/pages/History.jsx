@@ -4,7 +4,7 @@ import NavbarComponent from '../component/Navbar';
 import { Table, RefreshCcw, Calendar, Hash, ChevronUp, ChevronDown } from 'lucide-react';
 import MathEquation from "../component/MathEquation";
 
-const BisectionHistory = () => {
+const History = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -18,7 +18,7 @@ const BisectionHistory = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await axios.get('http://numer-serverside.vercel.app/api');
+            const response = await axios.get('https://numer-serverside.vercel.app/api/bisection');
             setData(response.data);
         } catch (err) {
             console.error('Error fetching data:', err);
@@ -124,19 +124,10 @@ const BisectionHistory = () => {
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <button 
                                             className="flex items-center gap-1"
-                                            onClick={() => sortData('x_start')}
+                                            onClick={() => sortData('input')}
                                         >
-                                            XL
-                                            {getSortIcon('x_start')}
-                                        </button>
-                                    </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
-                                            className="flex items-center gap-1"
-                                            onClick={() => sortData('x_end')}
-                                        >
-                                            XR
-                                            {getSortIcon('x_end')}
+                                            Input [XL, XR]
+                                            {getSortIcon('input')}
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -172,10 +163,7 @@ const BisectionHistory = () => {
                                             <MathEquation equation={`$${item.Equation}$`} />
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {Number(item.x_start).toFixed(4)}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {Number(item.x_end).toFixed(4)}
+                                            [{Number(item.x_start).toFixed(4)}, {Number(item.x_end).toFixed(4)}]
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {Number(item.result).toPrecision(7)}
@@ -204,4 +192,4 @@ const BisectionHistory = () => {
     );
 };
 
-export default BisectionHistory;
+export default History;
