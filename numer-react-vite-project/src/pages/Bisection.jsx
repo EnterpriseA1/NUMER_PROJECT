@@ -38,6 +38,7 @@ const BisectionMethod = () => {
     const saveResult = async (xm, lastError) => {
         try {
             const resultData = {
+                method: 'Bisection',
                 Equation: equation,
                 x_start: xl,
                 x_end: xr,

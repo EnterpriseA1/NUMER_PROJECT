@@ -5,7 +5,7 @@ const { list, create } = require('../controller/BisectionController');
 
 router.get('/', list);
 
-//router.get('/:id', read);
+
 
 router.post('/',create);
 

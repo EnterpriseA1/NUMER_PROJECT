@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const bisectionSchema = new mongoose.Schema({
+    method: {
+        type: String,
+        required: true,
+    },
     Equation: {
         type: String,
         required: true

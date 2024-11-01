@@ -3,7 +3,7 @@ const BisectionDB = require('../models/BisectionDB');
 
 
 
-// Get all bisections
+// Get all 
 const list = async (req, res) => {
     try {
         try {
@@ -19,7 +19,7 @@ const list = async (req, res) => {
     }
 };
 
-// Create new bisection     
+// Create new     
 const create = async (req, res) => {
     try {
         const result = (await BisectionDB.create(req.body));

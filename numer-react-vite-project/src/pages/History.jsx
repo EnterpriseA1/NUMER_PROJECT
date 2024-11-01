@@ -3,6 +3,7 @@ import axios from 'axios';
 import NavbarComponent from '../component/Navbar';
 import { Table, RefreshCcw, Calendar, Hash, ChevronUp, ChevronDown } from 'lucide-react';
 import MathEquation from "../component/MathEquation";
+import { string } from 'mathjs';
 
 const History = () => {
     const [data, setData] = useState([]);
@@ -37,7 +38,7 @@ const History = () => {
 
         const sortedData = [...data].sort((a, b) => {
             if (key === 'createdAt') {
-                return direction === 'asc' 
+                return direction === 'asc'
                     ? new Date(a[key]) - new Date(b[key])
                     : new Date(b[key]) - new Date(a[key]);
             }
@@ -82,7 +83,7 @@ const History = () => {
                         <Table className="w-6 h-6" />
                         <h1 className="text-2xl font-bold text-gray-800">Calculation History</h1>
                     </div>
-                    <button 
+                    <button
                         onClick={fetchData}
                         className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
                     >
@@ -103,7 +104,7 @@ const History = () => {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
+                                        <button
                                             className="flex items-center gap-1"
                                             onClick={() => sortData('createdAt')}
                                         >
@@ -113,7 +114,12 @@ const History = () => {
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
+                                        <button>
+                                            Method
+                                        </button>
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <button
                                             className="flex items-center gap-1"
                                             onClick={() => sortData('Equation')}
                                         >
@@ -122,16 +128,16 @@ const History = () => {
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
+                                        <button
                                             className="flex items-center gap-1"
                                             onClick={() => sortData('input')}
                                         >
-                                            Input [XL, XR]
+                                            Input
                                             {getSortIcon('input')}
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
+                                        <button
                                             className="flex items-center gap-1"
                                             onClick={() => sortData('result')}
                                         >
@@ -140,7 +146,7 @@ const History = () => {
                                         </button>
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        <button 
+                                        <button
                                             className="flex items-center gap-1"
                                             onClick={() => sortData('error')}
                                         >
@@ -152,12 +158,16 @@ const History = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {data.map((item, index) => (
-                                    <tr 
-                                        key={item._id} 
+                                    <tr
+                                        key={item._id}
                                         className={`hover:bg-gray-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                                     >
+
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {new Date(item.createdAt).toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {String(item.method)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             <MathEquation equation={`$${item.Equation}$`} />
