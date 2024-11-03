@@ -29,7 +29,7 @@ createRoot(document.getElementById('root')).render(
     <Route path="/Gauss-Jordan" element={<GaussJordanCalculator />}></Route>
     <Route path="/Newton-Divide" element={<NewtonDividedDifference />}></Route>
     <Route path="/Lagrange" element={<LagrangeInterpolation />}></Route>
-    
+    <Route path="/History" element={<History />}></Route>
     </Routes>
   </BrowserRouter>,
 )
