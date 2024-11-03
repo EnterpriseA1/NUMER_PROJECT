@@ -7,7 +7,7 @@ const test = require('../models/TEST');
 const list = async (req, res) => {
     try {
         try {
-            const result = await test.find();
+            const result = await BisectionDB.find();
             res.json( result );
         } catch (error) {
             console.error('List error:', error);
@@ -20,7 +20,7 @@ const list = async (req, res) => {
 };
 const listone =  async (req, res) => {
     try {
-        const result = await Test.findOne({ _id: req.params.id }).exec();
+        const result = await BisectionDB.findOne({ _id: req.params.id }).exec();
         res.json( result );
     }catch(error) {
         console.error('List error:', error);
