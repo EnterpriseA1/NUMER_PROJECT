@@ -291,3 +291,4 @@ const SecantMethod = () => {
 };
 
 export default SecantMethod;
+

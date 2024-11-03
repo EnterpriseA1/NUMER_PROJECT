@@ -12,7 +12,7 @@ const LagrangeInterpolation = () => {
     const [terms, setTerms] = useState([]);
     const [equation, setEquation] = useState("");
 
-    // Calculate Lagrange basis polynomial Li(x)
+    // Calculate  Li(x)
     const calculateBasisTerm = (i, x, points) => {
         let numerator = 1;
         let denominator = 1;
@@ -27,7 +27,7 @@ const LagrangeInterpolation = () => {
         return numerator / denominator;
     };
 
-    // Build Lagrange basis polynomial string for display
+    //หา  ค่า Li
     const buildBasisTermString = (i, points) => {
         let numerator = [];
         let denominator = [];
@@ -52,7 +52,7 @@ const LagrangeInterpolation = () => {
             const newTerms = [];
             let polynomial = "";
 
-            // Calculate interpolation and build polynomial string
+            
             for (let i = 0; i < n; i++) {
                 const basis = calculateBasisTerm(i, xValue, points);
                 const term = points[i].y * basis;

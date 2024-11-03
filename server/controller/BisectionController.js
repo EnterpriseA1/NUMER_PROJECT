@@ -18,6 +18,14 @@ const list = async (req, res) => {
         res.status(500).json({ error: 'Server Error' });
     }
 };
+const listone =  async (req, res) => {
+    try {
+        const result = await BisectionDB.findById(req.params.id);
+        res.json( result );
+    }catch(error) {
+        console.error('List error:', error);
+    }
+};
 
 // Create new     
 const create = async (req, res) => {
@@ -30,4 +38,4 @@ const create = async (req, res) => {
     }
 };
 
-module.exports = {  list, create };
+module.exports = {  list, create , listone};

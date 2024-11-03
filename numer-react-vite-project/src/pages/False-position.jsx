@@ -5,8 +5,6 @@ import NavbarComponent from "../component/Navbar";
 import { evaluate } from "mathjs";
 import axios from 'axios'; 
 
-
-
 const FalsePositionMethod = () => {
     const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);

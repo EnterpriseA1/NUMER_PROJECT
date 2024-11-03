@@ -5,6 +5,7 @@ import NavbarComponent from "../component/Navbar";
 import { evaluate } from 'mathjs';
 import axios from 'axios'; 
 
+
 const BisectionMethod = () => {
     const [equation, setEquation] = useState("x^4-13");
     const [xl, setXL] = useState(0);
@@ -16,7 +17,7 @@ const BisectionMethod = () => {
 
     // Fetch saved results on component mount
     useEffect(() => {
-        fetchSavedResults();
+        fetchSavedResults();    
     }, []);
 
     const fetchSavedResults = async () => {
@@ -38,6 +39,7 @@ const BisectionMethod = () => {
     const saveResult = async (xm, lastError) => {
         try {
             const resultData = {
+                id: id,
                 method: 'Bisection',
                 Equation: equation,
                 x_start: xl,
@@ -46,22 +48,33 @@ const BisectionMethod = () => {
                 error: lastError.toString()
             };
     
-            console.log('Sending data:', resultData); // Debug log
+            
     
-            const response = await axios.post(`${API_URL}/bisection`, resultData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await axios.post(`${API_URL}/bisection`, resultData);
+
+            console.log('Result saved successfully:', response.data);
     
-            console.log('Save response:', response.data); // Debug log
+            
             await fetchSavedResults();
         } catch (error) {
             console.error('Error saving result:', error.response?.data || error);
-            // You might want to show this error to the user
+          
             alert('Failed to save result: ' + (error.response?.data?.error || error.message));
         }
     };
+
+    const getHistory = async() => {
+        try {
+            const response = await axios.get(`${API_URL}/bisection/${id}`);
+            setEquation(response.data.Equation);
+            setXL(response.data.x_start);
+            setXR(response.data.x_end);
+            //return response.data;
+        } catch (error) {
+            console.error('Error fetching saved results:', error);
+            return [];
+        }
+    }
     const calculateBisection = (xl, xr) => {
         try {
             let xm, fXm, fXr, ea;
@@ -151,6 +164,13 @@ const BisectionMethod = () => {
                             className="bg-gray-800 text-white px-4 py-2 rounded"
                         >
                             Calculate
+                        </button>
+                        <button
+                            type="button"
+                            onClick={getHistory()}
+                            className="bg-gray-800 text-white px-4 py-2 rounded"
+                        >
+                            History
                         </button>
                     </form>
                     <br />

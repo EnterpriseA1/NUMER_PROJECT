@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./numer-react-vite-project  # แก้ path ให้ถูกต้อง
+        working-directory: ./numer-react-vite-project  
 
     steps:
     - name: Checkout code
@@ -38,8 +38,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
-        context: ./numer-react-vite-project  # แก้ path ให้ถูกต้อง
-        file: ./numer-react-vite-project/Dockerfile  # แก้ path ให้ถูกต้อง
+        context: ./numer-react-vite-project  
+        file: ./numer-react-vite-project/Dockerfile  
         push: true
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/numer-app:latest

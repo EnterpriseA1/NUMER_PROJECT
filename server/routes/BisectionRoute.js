@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { list, create } = require('../controller/BisectionController');
+const { list, create, listone } = require('../controller/BisectionController');
 
 router.get('/', list);
 
 
 
 router.post('/',create);
-
+router.get('/:id', listone);
 //debug
 /*router.get('/',async (req, res) => {
     try {
