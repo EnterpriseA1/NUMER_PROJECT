@@ -64,7 +64,9 @@ const BisectionMethod = () => {
 
     const getHistory = async() => {
         try {
-            const response = await axios.get(`${API_URL}/bisection/${string(id)}`);
+            const id = fetchSavedResults();
+            const id_ = string(id.id);
+            const response = await axios.get(`${API_URL}/bisection/${string(id_)}`);
             setEquation(response.data.Equation);
             setXL(response.data.x_start);
             setXR(response.data.x_end);
@@ -166,7 +168,7 @@ const BisectionMethod = () => {
                         </button>
                         <button
                             type="button"
-                            onClick={getHistory()}
+                            onClick={() => getHistory()}
                             className="bg-gray-800 text-white px-4 py-2 rounded"
                         >
                             History
