@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import MathEquation from "../component/MathEquation";
 import NavbarComponent from "../component/Navbar";
-import { evaluate } from 'mathjs';
+import { evaluate, string } from 'mathjs';
 import axios from 'axios'; 
 
 
@@ -39,7 +39,6 @@ const BisectionMethod = () => {
     const saveResult = async (xm, lastError) => {
         try {
             const resultData = {
-                id: id,
                 method: 'Bisection',
                 Equation: equation,
                 x_start: xl,
@@ -65,7 +64,7 @@ const BisectionMethod = () => {
 
     const getHistory = async() => {
         try {
-            const response = await axios.get(`${API_URL}/bisection/${id}`);
+            const response = await axios.get(`${API_URL}/bisection/${string(id)}`);
             setEquation(response.data.Equation);
             setXL(response.data.x_start);
             setXR(response.data.x_end);

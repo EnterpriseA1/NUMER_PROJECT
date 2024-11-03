@@ -20,7 +20,7 @@ const list = async (req, res) => {
 };
 const listone =  async (req, res) => {
     try {
-        const result = await BisectionDB.findById(req.params.id);
+        const result = await BisectionDB.findOne({ _id: req.params.id }).exec();
         res.json( result );
     }catch(error) {
         console.error('List error:', error);
