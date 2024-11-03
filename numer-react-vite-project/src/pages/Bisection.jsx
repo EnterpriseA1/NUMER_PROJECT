@@ -65,8 +65,8 @@ const BisectionMethod = () => {
     const getHistory = async() => {
         try {
             const id = fetchSavedResults();
-            const id_ = string(id.id);
-            const response = await axios.get(`${API_URL}/bisection/${string(id_)}`);
+            const id_ = string(id._id);
+            const response = await axios.get(`${API_URL}/bisection/${id_}`);
             setEquation(response.data.Equation);
             setXL(response.data.x_start);
             setXR(response.data.x_end);
