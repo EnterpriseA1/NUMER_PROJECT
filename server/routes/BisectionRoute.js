@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { list, create, listone } = require('../controller/TEST');
+const { list, create, listone } = require('../controller/BisectionController');
 
 router.get('/', list);
 
