@@ -25,6 +25,7 @@ const bisectionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    
     // Add any other fields you need
 }, { timestamps: true });
 
