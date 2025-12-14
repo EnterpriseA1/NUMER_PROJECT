@@ -35,18 +35,3 @@ https://numer-project-alpha.vercel.app
 - [ ] **Swagger API Docs** (ยังไม่เสร็จ)
 
 ---
-
-## การติดตั้งและรันโปรเจกต์ (Installation & Run)
-
-### 1. Backend (Server)
-เข้าไปที่โฟลเดอร์ server และทำการติดตั้ง package
-```bash
-cd server
-npm install
-รัน ServerBashnpm start
-# หรือ
-nodemon server.js
-Server จะรันที่ Port: 80002. Frontend (Client)เข้าไปที่โฟลเดอร์ numer-react-vite-projectBashcd numer-react-vite-project
-npm install
-รันหน้าเว็บBashnpm run dev
-Frontend จะรันผ่าน Vite ที่ http://localhost:5173API ReferenceMethodEndpointMethodDescriptionRoot of Equations/api/bisectionGETดึงข้อมูลโจทย์ตัวอย่าง (ใช้ร่วมกันทุก Method ในกลุ่ม Root)Root of Equations/api/bisectionPOSTบันทึกข้อมูลโจทย์ใหม่
