@@ -31,7 +31,6 @@ https://numer-project-alpha.vercel.app
 - [ ] **Lagrange Interpolation** (ยังไม่เสร็จ)
 
 ### System
-- [ ] **Authentication/Register** (ยังไม่เสร็จ)
 - [ ] **Swagger API Docs** (ยังไม่เสร็จ)
 
 ---
